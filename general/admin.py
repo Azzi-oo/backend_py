@@ -115,6 +115,9 @@ class PostModelAdmin(admin.ModelAdmin):
         AuthorFilter,
         ("created_at", DateRangeFilter),
     )
+    search_fields = (
+        "title",
+    )
 
     def get_body(self, obj):
         max_length = 64
@@ -126,6 +129,9 @@ class PostModelAdmin(admin.ModelAdmin):
 
     def get_comment_count(self, obj):
         return obj.comments.count()
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("commetns")
 
 
 @admin.register(Comment)
@@ -159,6 +165,10 @@ class ReactionModelAdmin(admin.ModelAdmin):
         PostFilter,
         AuthorFilter,
         ("value", ChoiceDropdownFilter),
+    )
+    autocomplete_fields = (
+        "author",
+        "post",
     )
 
 
