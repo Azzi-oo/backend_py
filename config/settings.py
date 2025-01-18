@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django_admin_listfilter_dropdown',
     'debug_toolbar',
     'drf_spectacular',
+    'django_filters',
 
     'general',
 ]
