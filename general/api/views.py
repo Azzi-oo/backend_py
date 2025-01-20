@@ -4,10 +4,11 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from general.api.serializers import ChatListSerializer, ChatSerializer, CommentSerializer, MessageListSerializer, PostCreateUpdateSerializer, PostListSerializer, PostRetrieveSerializer, ReactionSerializer, UserListSerializer, UserRegistrationSerializer, UserRetrieveSerializer
-from general.models import Comment, Message, Post, User
+from general.models import Chat, Comment, Message, Post, User
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import F, Case, When, CharField, Value
+from django.db.models import Q, Subquery, OuterRef
 
 
 class UserViewSet(
