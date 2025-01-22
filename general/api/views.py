@@ -3,7 +3,7 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveMode
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from general.api.serializers import ChatListSerializer, ChatSerializer, CommentSerializer, MessageListSerializer, PostCreateUpdateSerializer, PostListSerializer, PostRetrieveSerializer, ReactionSerializer, UserListSerializer, UserRegistrationSerializer, UserRetrieveSerializer
+from general.api.serializers import ChatListSerializer, ChatSerializer, CommentSerializer, MessageListSerializer, MessageSerializer, PostCreateUpdateSerializer, PostListSerializer, PostRetrieveSerializer, ReactionSerializer, UserListSerializer, UserRegistrationSerializer, UserRetrieveSerializer
 from general.models import Chat, Comment, Message, Post, User
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
@@ -174,3 +174,18 @@ class ChatViewSet(
         ).order_by("-created_at")
         serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
+    
+
+class MessageViewSet(
+    CreateModelMixin,
+    DestroyModelMixin,
+    GenericViewSet,
+):
+    serializer_class = MessageSerializer 
+    permission_classes = [IsAuthenticated]
+    queryset = Message.objects.all().order_by("-id")
+
+    def perform_destroy(self, instance):
+        if instance.author != self.request.user:
+            raise PermissionDenied("Вы не являетесь автором этого сообщения.")
+        instance.delete()
