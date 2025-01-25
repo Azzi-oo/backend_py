@@ -30,3 +30,15 @@ class CommentTestCase(APITestCase):
         self.assertEqual(data["body"], comment.body)
         self.assertEqual(self.user, comment.author)
         self.assertIsNotNone(comment.created_at)
+        
+    def test_pass_incorrect_post_id(self):
+        data = {
+            "post": self.post.pk + 1,
+            "body": "comment body",
+        }
+        response = self.client.post(
+            path=self.url,
+            data=data,
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
