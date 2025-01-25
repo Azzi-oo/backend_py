@@ -180,3 +180,27 @@ class PostTestCase(APITestCase):
         post.refresh_from_db()
         self.assertEqual(post.title, new_data["title"])
         self.assertEqual(post.body, new_data["body"])
+        
+    def test_delete_post(self):
+        post = PostFactory(
+            author=self.user,
+            title="old_title",
+            body="old_body",
+        )
+        response = self.client.delete(
+            path=f"{self.url}{post.pk}/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Post.objects.all().count(), 0)
+        
+    def test_try_to_delete_other_post(self):
+        post = PostFactory(
+            title="old_title",
+            body="old_body",
+        )
+        response = self.client.delete(
+            path=f"{self.url}{post.pk}/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
