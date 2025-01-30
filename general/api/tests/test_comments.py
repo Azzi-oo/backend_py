@@ -3,7 +3,7 @@ from rest_framework import status
 import json
 
 from general.factories import CommentFactory, PostFactory, ReactionFactory, UserFactory
-from general.models import Comment, Post, Reaction
+from general.models import Comment
 
 
 class CommentTestCase(APITestCase):
