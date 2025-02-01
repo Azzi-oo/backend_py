@@ -36,3 +36,28 @@ class MessageTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
         self.assertEqual(Message.objects.count(), 0)
+        
+    def test_delete_own_message(self):
+        chat = ChatFactory(user_1=self.user)
+        message = MessageFactory(author=self.user, chat=chat)
+        
+        response = self.client.delete(
+            self.url + f"{message.pk}/",
+            format="json",
+        )
+        self.assertEqual(chat.messages.count(), 0)
+        self.assertEqual(self.user.messages.count(), 0)
+        
+    def test_try_to_delete_companion_message(self):
+        companion = UserFactory()
+        chat = ChatFactory(user_1=self.user, user_2=companion)
+        message = MessageFactory(author=companion, chat=chat)
+        
+        response = self.client.delete(
+            self.url + f"{message.pk}/",
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        
+        self.assertEqual(chat.messages.count(), 1)
+        self.assertEqual(companion.messages.count(), 1)
